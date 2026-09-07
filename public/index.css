@@ -1,0 +1,301 @@
+:root {
+  --ctp-rosewater: #f5e0dc;
+  --ctp-red: #f38ba8;
+  --ctp-peach: #fab387;
+  --ctp-yellow: #f9e2af;
+  --ctp-green: #a6e3a1;
+  --ctp-teal: #94e2d5;
+  --ctp-blue: #cba6f7;
+  --ctp-lavender: #b4befe;
+  --ctp-text: #cdd6f4;
+  --ctp-subtext-1: #bac2de;
+  --ctp-subtext-0: #a6adc8;
+  --ctp-overlay-1: #7f849c;
+  --ctp-overlay-0: #6c7086;
+  --ctp-surface-2: #585b70;
+  --ctp-surface-1: #45475a;
+  --ctp-surface-0: #313244;
+  --ctp-base: #1e1e2e;
+  --ctp-mantle: #181825;
+  --ctp-crust: #11111b;
+  --cell-size: clamp(28px, 8vw, 34px);
+}
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--ctp-base);
+  color: var(--ctp-text);
+  font-family: "Trebuchet MS", sans-serif;
+  text-align: center;
+}
+
+.game-shell {
+  width: min(100%, 760px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+h1 {
+  margin: 0;
+  color: var(--ctp-text);
+  font-size: clamp(28px, 7vw, 44px);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.toolbar,
+.paint-controls,
+.home-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar {
+  color: var(--ctp-subtext-1);
+  font-size: 13px;
+}
+
+.toolbar > span {
+  padding: 0;
+}
+
+.toolbar strong { color: var(--ctp-text); }
+
+.main-link,
+#restart,
+.paint-button,
+.upload-label {
+  display: inline-block;
+  border: 0;
+  border-radius: 8px;
+  padding: 4px 8px;
+  background: var(--ctp-blue);
+  color: var(--ctp-base);
+  font-family: "Trebuchet MS", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 130ms ease, border-color 130ms ease, color 130ms ease;
+}
+
+.main-link:hover,
+#restart:hover,
+.paint-button:hover,
+.upload-label:hover {
+  background: var(--ctp-lavender);
+  color: var(--ctp-base);
+}
+
+.paint-button:disabled,
+#restart:disabled {
+  color: var(--ctp-overlay-0);
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.home-link { padding: 4px 7px; }
+#imageUpload { display: none; }
+
+.menu-toggle {
+  padding: 4px 7px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--ctp-surface-0);
+  color: var(--ctp-blue);
+  font-family: "Trebuchet MS", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+
+.menu-toggle:hover {
+  background: var(--ctp-surface-1);
+  color: var(--ctp-lavender);
+}
+
+.game-menu-panel {
+  max-height: 0;
+  margin-top: 0;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-5px);
+  transition:
+    max-height 220ms ease,
+    margin-top 220ms ease,
+    opacity 160ms ease,
+    transform 220ms ease,
+    visibility 0s linear 220ms;
+}
+
+.game-menu-panel.is-open {
+  max-height: 100px;
+  margin-top: 8px;
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+
+.social-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.social-link {
+  display: block;
+  padding: 3px;
+  color: var(--ctp-blue);
+}
+
+.social-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  mask: var(--social-icon) center / contain no-repeat;
+  -webkit-mask: var(--social-icon) center / contain no-repeat;
+  transition: color 130ms ease, transform 130ms ease;
+}
+
+.social-link:hover {
+  color: var(--ctp-lavender);
+}
+
+.social-link:hover .social-icon {
+  transform: translateY(-1px);
+}
+
+.twitter-icon { --social-icon: url('/assets/logos/x-1.svg'); }
+.discord-icon { --social-icon: url('/assets/logos/discord-1.svg'); }
+.github-icon { --social-icon: url('/assets/logos/github-1.svg'); }
+.bsky-icon { --social-icon: url('/assets/logos/bluesky.svg'); }
+.youtube-icon { --social-icon: url('/assets/logos/youtube-1.svg'); }
+
+.board {
+  display: grid;
+  gap: clamp(2px, 1vw, 4px);
+  padding: 10px;
+  background: var(--ctp-crust);
+  border-radius: 10px;
+}
+
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: var(--ctp-surface-0);
+  color: var(--ctp-text);
+  font-family: "Trebuchet MS", sans-serif;
+  font-size: clamp(14px, 4vw, 16px);
+  font-weight: 700;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+}
+
+.cell:hover:not(:disabled) {
+  background: var(--ctp-surface-1);
+}
+
+.cell.revealed {
+  background: var(--ctp-base);
+  cursor: default;
+}
+
+.cell.mine {
+  background: var(--ctp-red);
+  color: var(--ctp-base);
+}
+
+.cell.flagged {
+  background: var(--ctp-yellow);
+  color: var(--ctp-base);
+}
+
+.cell.n1 { color: var(--ctp-blue); }
+.cell.n2 { color: var(--ctp-green); }
+.cell.n3 { color: var(--ctp-red); }
+.cell.n4 { color: var(--ctp-lavender); }
+.cell.n5 { color: var(--ctp-peach); }
+.cell.n6 { color: var(--ctp-teal); }
+.cell.n7 { color: var(--ctp-text); }
+.cell.n8 { color: var(--ctp-overlay-1); }
+
+.paint-layout {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+}
+
+.canvas-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--ctp-subtext-0);
+}
+
+.paint-canvas {
+  max-width: min(260px, calc(100vw - 76px));
+  max-height: min(260px, calc(100vw - 76px));
+  border: 0;
+  border-radius: 0;
+  background: #fff;
+  touch-action: none;
+}
+
+.canvas-card p {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 420px) {
+  body { padding: 10px; }
+
+  .game-shell {
+    gap: 12px;
+    padding: 10px;
+  }
+
+  .board { padding: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

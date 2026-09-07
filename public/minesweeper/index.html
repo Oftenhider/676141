@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>676141.xyz - Minesweeper</title>
+    <link rel="stylesheet" href="/index.css">
+  </head>
+  <body>
+    <main class="game-shell">
+      <h1>Minesweeper</h1>
+      <div class="toolbar">
+        <span id="status">Left click to reveal, right click to flag, middle click to chord</span>
+        <span>Mines: <span id="minesLeft">10</span></span>
+        <button id="restart" type="button">Restart</button>
+        <a class="main-link" href="/">Back to main</a>
+      </div>
+      <div id="board" class="board" aria-label="Minesweeper game board"></div>
+    </main>
+
+    <script>
+      (function() {
+        const rows = 9;
+        const cols = 9;
+        const mineCount = 10;
+
+        const boardElement = document.getElementById('board');
+        const statusElement = document.getElementById('status');
+        const minesLeftElement = document.getElementById('minesLeft');
+        const restartButton = document.getElementById('restart');
+
+        let cells = [];
+        let minesPlaced = false;
+        let gameOver = false;
+        let flagsPlaced = 0;
+        let revealedSafe = 0;
+
+        function makeCells() {
+          boardElement.style.gridTemplateColumns = `repeat(${cols}, var(--cell-size))`;
+          boardElement.innerHTML = '';
+          cells = [];
+          minesPlaced = false;
+          gameOver = false;
+          flagsPlaced = 0;
+          revealedSafe = 0;
+
+          for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+              const index = row * cols + col;
+              const button = document.createElement('button');
+              const cell = {
+                row,
+                col,
+                index,
+                mine: false,
+                revealed: false,
+                flagged: false,
+                count: 0,
+                el: button
+              };
+
+              button.type = 'button';
+              button.className = 'cell';
+              button.dataset.index = String(index);
+              button.addEventListener('click', () => revealFromClick(cell));
+              button.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+                toggleFlag(cell);
+              });
+              button.addEventListener('mousedown', (event) => {
+                if (event.button === 1) {
+                  event.preventDefault();
+                  chord(cell);
+                }
+              });
+
+              boardElement.appendChild(button);
+              cells.push(cell);
+            }
+          }
+
+          statusElement.textContent = 'Left click to reveal, right click to flag, middle click to chord';
+          minesLeftElement.textContent = String(mineCount);
+        }
+
+        function neighbors(cell) {
+          const list = [];
+          for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+              if (dr === 0 && dc === 0) continue;
+              const r = cell.row + dr;
+              const c = cell.col + dc;
+              if (r < 0 || r >= rows || c < 0 || c >= cols) continue;
+              list.push(getCell(r, c));
+            }
+          }
+          return list;
+        }
+
+        function getCell(row, col) {
+          return cells[row * cols + col];
+        }
+
+        function plantMines(safeCell) {
+          let placed = 0;
+          while (placed < mineCount) {
+            const idx = Math.floor(Math.random() * cells.length);
+            const candidate = cells[idx];
+            if (
+              candidate.mine ||
+              (candidate.row === safeCell.row && candidate.col === safeCell.col)
+            ) {
+              continue;
+            }
+            candidate.mine = true;
+            placed++;
+          }
+
+          cells.forEach((cell) => {
+            cell.count = 0;
+            neighbors(cell).forEach((adjacent) => {
+              if (adjacent.mine) cell.count += 1;
+            });
+          });
+          minesPlaced = true;
+        }
+
+        function revealFromClick(cell) {
+          if (gameOver || cell.revealed || cell.flagged) return;
+
+          if (!minesPlaced) {
+            plantMines(cell);
+            statusElement.textContent = 'Use flags to mark mines';
+          }
+          reveal(cell);
+          updateProgress();
+        }
+
+        function reveal(cell) {
+          const stack = [cell];
+          while (stack.length) {
+            const current = stack.pop();
+            if (!current || current.revealed || current.flagged || gameOver) continue;
+
+            current.revealed = true;
+            current.el.classList.add('revealed');
+            current.el.disabled = true;
+            current.el.textContent = '';
+
+            if (current.mine) {
+              current.el.classList.add('mine');
+              current.el.textContent = '*';
+              statusElement.textContent = 'Boom! Game over';
+              gameOver = true;
+              revealAllMines();
+              return;
+            }
+
+            revealedSafe += 1;
+
+            if (current.count > 0) {
+              current.el.textContent = String(current.count);
+              current.el.classList.add(`n${current.count}`);
+            } else {
+              neighbors(current).forEach((adjacent) => {
+                if (!adjacent.revealed && !adjacent.flagged) {
+                  stack.push(adjacent);
+                }
+              });
+            }
+          }
+
+          if (revealedSafe === (rows * cols - mineCount)) {
+            gameOver = true;
+            statusElement.textContent = 'You found all safe cells!';
+            disableBoard();
+          }
+        }
+
+        function chord(cell) {
+          if (gameOver || !cell.revealed || cell.count === 0) return;
+
+          const surrounding = neighbors(cell);
+          const flagged = surrounding.filter((adjacent) => adjacent.flagged).length;
+          if (flagged !== cell.count) return;
+
+          surrounding.forEach((adjacent) => {
+            if (!adjacent.revealed && !adjacent.flagged) {
+              reveal(adjacent);
+            }
+          });
+
+          updateProgress();
+        }
+
+        function toggleFlag(cell) {
+          if (gameOver || cell.revealed) return;
+          if (!cell.flagged) {
+            if (flagsPlaced >= mineCount) return;
+            cell.flagged = true;
+            cell.el.classList.add('flagged');
+            cell.el.textContent = '!';
+            flagsPlaced += 1;
+          } else {
+            cell.flagged = false;
+            cell.el.classList.remove('flagged');
+            cell.el.textContent = '';
+            flagsPlaced -= 1;
+          }
+          minesLeftElement.textContent = String(mineCount - flagsPlaced);
+        }
+
+        function revealAllMines() {
+          cells.forEach((cell) => {
+            if (cell.mine && !cell.revealed) {
+              cell.el.classList.add('revealed', 'mine');
+              cell.el.textContent = '*';
+            }
+            cell.el.disabled = true;
+          });
+        }
+
+        function disableBoard() {
+          cells.forEach((cell) => {
+            cell.el.disabled = true;
+          });
+        }
+
+        function updateProgress() {
+          if (gameOver) {
+            minesLeftElement.textContent = String(mineCount - flagsPlaced);
+            return;
+          }
+          statusElement.textContent = statusElement.textContent || 'Left click to start';
+          minesLeftElement.textContent = String(mineCount - flagsPlaced);
+        }
+
+        restartButton.addEventListener('click', makeCells);
+
+        makeCells();
+      })();
+    </script>
+  </body>
+</html>

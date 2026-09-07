@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>676141.xyz</title>
+    <link rel="stylesheet" href="/index.css">
+  </head>
+  <body>
+    <main class="game-shell">
+      <h1>Welcome to 676141.xyz</h1>
+      <p>I bought this website for $0,67, I don't really have a use for it, consider following me on:</p>
+      <nav class="social-links" aria-label="Social links">
+        <a class="social-link" href="https://twitter.com/Oftenhider" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+          <span class="social-icon twitter-icon" aria-hidden="true"></span>
+        </a>
+        <a class="social-link" href="<https://discord.com/users/1514279001181651045>" target="_blank" rel="noopener noreferrer" aria-label="Discord">
+          <span class="social-icon discord-icon" aria-hidden="true"></span>
+        </a>
+        <a class="social-link" href="https://github.com/Oftenhider" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <span class="social-icon github-icon" aria-hidden="true"></span>
+        </a>
+        <a class="social-link" href="https://bsky.app/profile/676141.xyz" target="_blank" rel="noopener noreferrer" aria-label="Bluesky">
+          <span class="social-icon bsky-icon" aria-hidden="true"></span>
+        </a>
+        <a class="social-link" href="https://youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+          <span class="social-icon youtube-icon" aria-hidden="true"></span>
+        </a>
+      </nav>
+      <div class="game-menu">
+        <button id="gameMenuToggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="gameLinks">Games</button>
+        <div id="gameLinks" class="game-menu-panel" aria-hidden="true">
+          <div class="home-links">
+            <a class="main-link home-link" href="/minesweeper">Play Minesweeper</a>
+            <a class="main-link home-link" href="/speedpaint">Play Speedpaint</a>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      const menuToggle = document.getElementById('gameMenuToggle');
+      const gameLinks = document.getElementById('gameLinks');
+
+      menuToggle.addEventListener('click', () => {
+        const isOpen = gameLinks.classList.toggle('is-open');
+        menuToggle.setAttribute('aria-expanded', String(isOpen));
+        gameLinks.setAttribute('aria-hidden', String(!isOpen));
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "site-676141-xyz",
+  "compatibility_date": "2026-09-07",
+  "workers_dev": false,
+  "assets": {
+    "directory": "./public",
+    "html_handling": "drop-trailing-slash"
+  },
+  "routes": [
+    {
+      "pattern": "676141.xyz",
+      "custom_domain": true
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.01
+    }
+  }
+}
